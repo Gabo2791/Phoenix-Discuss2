@@ -1,13 +1,15 @@
 defmodule Discuss.Schema.User do
     @moduledoc """
-  
+
   """
   use DiscussWeb, :schema
 
-  schema "topics" do
+  schema "users" do
     field :email, :string
     field :provider, :string
     field :token, :string
+
+    timestamps()
   end
 
   def changeset(struct, params \\ %{}) do
