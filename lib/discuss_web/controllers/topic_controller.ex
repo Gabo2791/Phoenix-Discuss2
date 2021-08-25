@@ -1,10 +1,12 @@
 defmodule DiscussWeb.TopicController do
     @moduledoc """
-  
+
   """
   use DiscussWeb, :controller
 
   alias Discuss.Schema.Topic
+
+  plug DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
   # Controlador que te redirige a la página principal
   def index(conn, _params) do
     topics = Repo.all(Topic)
@@ -17,7 +19,7 @@ defmodule DiscussWeb.TopicController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  # Controlador que realiza la creación de un nuevo topico 
+  # Controlador que realiza la creación de un nuevo topico
   def create(conn, %{"topic" => topic}) do
     changeset = Topic.changeset(%Topic{}, topic)
 
