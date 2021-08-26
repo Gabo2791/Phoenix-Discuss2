@@ -7,6 +7,8 @@ defmodule DiscussWeb.TopicController do
   alias Discuss.Schema.Topic
 
   plug DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
+  plug :check_topic_owner when action in [:update, :edit, :delete]
+
   # Controlador que te redirige a la página principal
   def index(conn, _params) do
     topics = Repo.all(Topic)
@@ -21,7 +23,9 @@ defmodule DiscussWeb.TopicController do
 
   # Controlador que realiza la creación de un nuevo topico
   def create(conn, %{"topic" => topic}) do
-    changeset = Topic.changeset(%Topic{}, topic)
+    changeset = conn.assigns.user
+      |> build_assoc(:topics)
+      |> Topic.changeset(topic)
 
     # Funcion que realiza la insercion de un nuevo topico en la base de datos
     case Repo.insert(changeset) do
@@ -70,5 +74,18 @@ defmodule DiscussWeb.TopicController do
     conn
     |> put_flash(:info, "Topic Deleted!")
     |> redirect(to: Routes.topic_path(conn, :index))
+  end
+
+  def check_topic_owner(conn, _params) do
+    %{params: %{"id" => topic_id}} = conn #Pattern matching
+
+    if Repo.get(Topic, topic_id).user_id == conn.assigns.user.id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You cannot edit that!")
+      |> redirect(to: Routes.topic_path(conn, :index))
+      |> halt()
+    end
   end
 end
