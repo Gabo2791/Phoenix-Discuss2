@@ -15,6 +15,11 @@ defmodule DiscussWeb.TopicController do
     render(conn, "index.html", topics: topics)
   end
 
+  def show(conn, %{"id" => topic_id}) do
+    topic = Repo.get!(Topic, topic_id)
+    render(conn, "show.html", topic: topic)
+  end
+
   # Controlador que realiza el espliegue de un formulario para ingresar nuevos tópicos
   def new(conn, _params) do
     changeset = Topic.changeset(%Topic{}, %{})

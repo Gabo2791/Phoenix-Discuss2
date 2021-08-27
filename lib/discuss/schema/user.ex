@@ -9,6 +9,7 @@ defmodule Discuss.Schema.User do
     field :provider, :string
     field :token, :string
     has_many :topics, Discuss.Schema.Topic
+    has_many :comments, Discuss.Schema.Comment
 
     timestamps()
   end
