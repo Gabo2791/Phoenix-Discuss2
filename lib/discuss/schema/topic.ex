@@ -1,5 +1,5 @@
 defmodule Discuss.Schema.Topic do
-    @moduledoc """
+  @moduledoc """
 
   """
   use DiscussWeb, :schema
@@ -7,6 +7,7 @@ defmodule Discuss.Schema.Topic do
   schema "topics" do
     field :title, :string
     belongs_to :user, Discuss.Schema.User
+    has_many :comments, Discuss.Schema.Comment
   end
 
   def changeset(struct, params \\ %{}) do
