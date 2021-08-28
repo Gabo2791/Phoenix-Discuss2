@@ -1,10 +1,10 @@
 defmodule DiscussWeb.TopicController do
-    @moduledoc """
+  @moduledoc """
 
   """
   use DiscussWeb, :controller
 
-  alias Discuss.Schema.Topic
+  alias Discuss.Schema.{Comment, Topic}
 
   plug DiscussWeb.Plugs.RequireAuth when action in [:new, :create, :edit, :update, :delete]
   plug :check_topic_owner when action in [:update, :edit, :delete]
@@ -17,10 +17,11 @@ defmodule DiscussWeb.TopicController do
 
   def show(conn, %{"id" => topic_id}) do
     topic = Repo.get!(Topic, topic_id)
-    render(conn, "show.html", topic: topic)
+    changeset = Comment.changeset(%Comment{}, %{})
+    render(conn, "show.html", topic: topic, changeset: changeset, message: nil)
   end
 
-  # Controlador que realiza el espliegue de un formulario para ingresar nuevos tópicos
+  # Controlador que realiza el despliegue de un formulario para ingresar nuevos tópicos
   def new(conn, _params) do
     changeset = Topic.changeset(%Topic{}, %{})
     render(conn, "new.html", changeset: changeset)
@@ -28,7 +29,8 @@ defmodule DiscussWeb.TopicController do
 
   # Controlador que realiza la creación de un nuevo topico
   def create(conn, %{"topic" => topic}) do
-    changeset = conn.assigns.user
+    changeset =
+      conn.assigns.user
       |> build_assoc(:topics)
       |> Topic.changeset(topic)
 
@@ -82,7 +84,8 @@ defmodule DiscussWeb.TopicController do
   end
 
   def check_topic_owner(conn, _params) do
-    %{params: %{"id" => topic_id}} = conn #Pattern matching
+    # Pattern matching
+    %{params: %{"id" => topic_id}} = conn
 
     if Repo.get(Topic, topic_id).user_id == conn.assigns.user.id do
       conn

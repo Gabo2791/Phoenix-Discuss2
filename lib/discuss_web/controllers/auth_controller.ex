@@ -10,6 +10,7 @@ defmodule DiscussWeb.AuthController do
       email: auth.info.email,
       provider: params["provider"]
     }
+
     changeset = User.changeset(%User{}, user_params)
     signin(conn, changeset)
   end
@@ -33,6 +34,7 @@ defmodule DiscussWeb.AuthController do
         |> put_flash(:info, "Welcome back!")
         |> put_session(:user_id, user.id)
         |> redirect(to: Routes.topic_path(conn, :index))
+
       {:error, _reason} ->
         conn
         |> put_flash(:error, "Error signing in")
@@ -44,16 +46,17 @@ defmodule DiscussWeb.AuthController do
     case Repo.get_by(User, email: changeset.changes.email) do
       nil ->
         Repo.insert(changeset)
+
       user ->
         {:ok, user}
     end
   end
 
-    # def callback(conn, params) do
-    #   IO.puts("+++++")
-    #   IO.inspect(conn.assigns)
-    #   IO.puts("+++++++")
-    #   IO.inspect(params)
-    #   IO.puts("+++++")
-    # end
+  # def callback(conn, params) do
+  #   IO.puts("+++++")
+  #   IO.inspect(conn.assigns)
+  #   IO.puts("+++++++")
+  #   IO.inspect(params)
+  #   IO.puts("+++++")
+  # end
 end

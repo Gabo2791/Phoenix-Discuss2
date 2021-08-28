@@ -54,10 +54,53 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 // Finally, connect to the socket:
 socket.connect()
 
-// Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("comments:1", {})
-channel.join()
-  .receive("ok", resp => { console.log("Te has vinculado correctamente al canal", resp) })
-  .receive("error", resp => { console.log("Sepa la verga que paso, pero no te pudiste vincular al canal", resp) })
+const createSocket = (topicId) => {
+  let channel = socket.channel(`comments:${topicId}`, {})
+  channel.join()
+    .receive("ok", resp => { 
+      renderComments(resp.comments)  
+    })
+    .receive("error", resp => { console.log("No te pudiste vincular al canal", resp); 
+  });
 
-export default socket
+  channel.on(`comments:${topicId}:new`, renderComment)
+
+  if(document.querySelector("button")) {
+    document.querySelector('button').addEventListener('click', () => {
+      const content = document.querySelector('textarea').value;
+
+      channel.push('comment:add', {content});
+    });
+  }
+
+};
+
+function renderComments(comments){
+  const renderedComments = comments.map(comment => {
+    return commentTemplate(comment);
+  });
+
+  document.querySelector('.collection').innerHTML = renderedComments.join('');
+}
+
+function renderComment(event) {
+  const renderedComment = commentTemplate(event.comment);
+
+  document.querySelector('.collection').innerHTML += renderedComment;
+}
+
+function commentTemplate(comment) {
+  let email = 'Anonymous';
+  if (comment.user) {
+    email = comment.user.email;
+  }
+  return `
+    <li class="collection-item">
+      ${comment.content}
+      <div class="secondary-content">
+        ${email}
+      </div>
+    </li>
+  `;
+}
+window.createSocket = createSocket;

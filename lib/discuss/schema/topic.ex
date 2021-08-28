@@ -1,5 +1,5 @@
 defmodule Discuss.Schema.Topic do
-    @moduledoc """
+  @moduledoc """
 
   """
   use DiscussWeb, :schema

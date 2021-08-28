@@ -4,8 +4,10 @@ defmodule Discuss.Schema.Comment do
   """
   use DiscussWeb, :schema
 
+  @derive {Jason.Encoder, only: [:content, :user]}
+
   schema "comments" do
-    field :comment, :string
+    field :content, :string
     belongs_to :topic, Discuss.Schema.Topic
     belongs_to :user, Discuss.Schema.User
 

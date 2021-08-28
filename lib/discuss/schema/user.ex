@@ -1,9 +1,10 @@
 defmodule Discuss.Schema.User do
-    @moduledoc """
+  @moduledoc """
 
   """
   use DiscussWeb, :schema
 
+  @derive {Jason.Encoder, only: [:email]}
   schema "users" do
     field :email, :string
     field :provider, :string
