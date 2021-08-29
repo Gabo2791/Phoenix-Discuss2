@@ -2,7 +2,6 @@ defmodule DiscussWeb.CommentsChannel do
   use Phoenix.Channel
 
   import Ecto
-  import Phoenix.HTML
   alias Discuss.Repo
   alias Discuss.Schema.{Comment, Topic}
 
